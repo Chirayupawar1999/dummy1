@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>todo list</title>
+    <style>
+      body {
+        border: 1px solid black;
+        border-radius: 20px;
+      }
+      p {
+        display: inline;
+        border: 1px dotted aquamarine;
+        margin: 2 px;
+        padding: 1px;
+        position: relative;
+        left: 50px;
+        top: 5px;
+      }
+      #first {
+        position: relative;
+        left: 320px;
+        width: 700px;
+        height: 400px;
+      }
+      #second {
+        border: 1px solid black;
+        position: relative;
+        top: 20px;
+        left: 50px;
+        width: 595px;
+        padding: 10px;
+        overflow: auto;
+        border-radius: 5px;
+      }
+      #editbtn {
+        position: relative;
+        left: 350px;
+        width: 70px;
+        height: 25px;
+        border-radius: 20px;
+        color: white;
+        background-color: yellow;
+      }
+      p2 {
+        margin: 10px;
+      }
+      #deletebtn {
+        position: relative;
+        left: 200px;
+        width: 70px;
+        height: 25px;
+        border-radius: 20px;
+        color: white;
+        background-color: red;
+      }
+      #addtaskinput {
+        width: 400px;
+        height: 30px;
+        position: relative;
+        left: 50px;
+        border-radius: 15px;
+      }
+      #addtaskbtn {
+        position: relative;
+        left: 50px;
+        height: 30px;
+        width: 100px;
+        border-radius: 20px;
+        color: white;
+        background-color: green;
+        transition: width 1s;
+      }
+      #tasktoadd {
+        border: 1px solid black;
+        width: 200px;
+        height: 150px;
+      }
+      #savebtn {
+        display: none;
+        position: relative;
+        left: 50px;
+        width: 100px;
+        height: 30px;
+        border-radius: 30px;
+        color: white;
+        background-color: yellow;
+        transition: width 2s;
+      }
+      #deleteall {
+        
+        position: relative;
+        left: 50px;
+        width: 100px;
+        height: 30px;
+        border-radius: 30px;
+        color: white;
+        background-color: red;
+        transition: width 1s;
+      }
+      #deleteall:hover{
+        width:180px;
+      }
+      #savebtn:hover{
+        width:180px;
+      }
+      #addtaskbtn:hover{
+        width:180px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><center>WELCOME USER</center></h1>
+    <hr />
+    <div id="first">
+      <input
+        type="text"
+        id="addtaskinput"
+        placeholder="type something that you want to add"
+      />
+      <input type="button" id="addtaskbtn" value="additem" />
+      <input type="button" value="save" id="savebtn" />
+      <input type="button" value="deleteAll" id="deleteall" />
+      <br />
+      <p>index</p>
+      <p>task</p>
+      <!-- <p>COMPLETED</p> -->
+      <div id="second">
+        <!-- <p3>${index}:-</p3><p2>${element}</p2>
+        <input type="button" value="edit" id="editbtn" >
+        <input type="button" value="done" id="deletebtn">
+        <br><br> -->
+      </div>
+    </div>
+    <input type="hidden" id="indexnumber" />
+    <script>
+      addtaskinput = document.getElementById("addtaskinput");
+      addtaskbtn = document.getElementById("addtaskbtn");
+      addsavebtn = document.getElementById("savebtn");
+      showtask();
+      addtaskbtn.addEventListener("click", () => {
+        addtaskinputval = addtaskinput.value;
+        if (addtaskinputval.trim() != 0) {
+          let webtask = localStorage.getItem("localtask");
+          if (webtask == null) {
+            taskobj = [];
+          } else {
+            taskobj = JSON.parse(webtask);
+          }
+          taskobj.push(addtaskinputval);
+          localStorage.setItem("localtask", JSON.stringify(taskobj));
+          showtask();
+          //
+        }
+      });
+      function showtask() {
+        let webtask = localStorage.getItem("localtask");
+        if (webtask == null) {
+          taskobj = [];
+        } else {
+          taskobj = JSON.parse(webtask);
+        }
+        let html = "";
+        let second = document.getElementById("second");
+        taskobj.forEach((element, index) => {
+          html += `<p3>${index}:-</p3><p2>${element}</p2>
+  <input type="button" value="edit" id="editbtn" onclick="edittask(${index})">
+  <input type="button" value="done" id="deletebtn" onclick="deletetask(${index})" >
+  <br><br>`;
+        });
+        second.innerHTML = html;
+        addtaskinput.value = " ";
+      }
+      function edittask(index) {
+        let webtask = localStorage.getItem("localtask");
+        let taskobj = JSON.parse(webtask);
+        addtaskinput.value = taskobj[index];
+        addtaskbtn.style.display = "none";
+        addsavebtn.style.display = "inline";
+        //we wil need this index in order to save the edit value corresponding to its place in local storage
+        //or save the value in local storage on needed index so we will use input type hidden
+        let indexnumber = document.getElementById("indexnumber");
+        indexnumber.value = index;
+      }
+      addsavebtn.addEventListener("click", () => {
+        let webtask = localStorage.getItem("localtask");
+        taskobj = JSON.parse(webtask);
+        let index = indexnumber.value;
+        taskobj[index] = addtaskinput.value;
+        addtaskbtn.style.display = "inline";
+        addsavebtn.style.display = "none";
+        localStorage.setItem("localtask", JSON.stringify(taskobj));
+        showtask();
+        addtaskinput.value = "";
+      });
+      function deletetask(index) {
+        let webtask = localStorage.getItem("localtask");
+        taskobj = JSON.parse(webtask);
+        taskobj.splice(index, 1);
+        localStorage.setItem("localtask", JSON.stringify(taskobj));
+        showtask();
+      }
+      let deleteall = document.getElementById("deleteall");
+      deleteall.addEventListener("click", function () {
+        let webtask = localStorage.getItem("localtask");
+        taskobj = JSON.parse(webtask);
+        taskobj = [];
+        localStorage.setItem("localtask", JSON.stringify(taskobj));
+        showtask();
+      });
+    </script>
+  </body>
+</html>
